@@ -5,7 +5,7 @@ module.exports = defineConfig({
   use: {
     baseURL: 'https://reqres.in/api/',
     extraHTTPHeaders: {
-      'x-api-key': 'free_user_3G7XKENJNoJ9DqhHP1y5LUnk502',
+      'x-api-key': 'pro_241e97451cdfc83099bdef91576dcc7036bfbdd532567e6c5d8539d6393a2561',
       'X-Reqres-Env':'prod'
     },
   },
