@@ -1,95 +1,68 @@
 const {test, expect, request} = require('@playwright/test');
+const {AuthApi} = require('../utils/authApi');
+const {UserApi} = require('../utils/usersApi');
 
-//ReqRes's original
 test('get the user', async ({request}) =>{
-    const response = await request.get('users/2')
-    expect(response.status()).toBe(200);
-    const theBody = await response.json();
-    expect(theBody.data.id).toBe(2)
-    expect(theBody.data.email).toBeTruthy();
+    const userapi = new UserApi(request);
+    const userLegacy = await userapi.getUserLegacy(2)
+    expect(userLegacy.status()).toBe(200)
+    const body = await userLegacy.json();
+    expect(body.data.id).toBe(2);
+    expect(body.data.email).toBeTruthy();
 })
 
 test('GET users page two ', async ({request}) =>{
-    const response = await request.get('users?page=2');
-    expect(response.status()).toBe(200)
-    const thebody  = await response.json()
-    expect(thebody.page).toBeTruthy();
-    expect(thebody.page).toBe(2)
-    expect(thebody.total_pages).toBeTruthy();
-    expect(thebody.data).toBeTruthy()
-    expect(thebody.data.length).toBe(6)
+    const userapi = new UserApi(request);
+    const listUser = await userapi.listUserLegacy(2)
+    expect(listUser.status()).toBe(200);
+    const body = await listUser.json();
+    expect(body.page).toBeTruthy();
+    expect(body.page).toBe(2);
+    expect(body.total_pages).toBeTruthy();
+    expect(body.data).toBeTruthy();
+    expect(body.data.length).toBe(6)
 })
 
+//LOGIN AUTH 
+
 test('post login - success', async ({request}) =>{
-    const response = await request.post(`login`,{
-        data:{
-            email:"eve.holt@reqres.in",
-            password:"cityslicka"
-        }
-    })
-    expect(response.status()).toBe(200)
-    const body = await response.json()
+    const authApi = new AuthApi(request);
+    const login = await authApi.login(
+        "eve.holt@reqres.in",
+        "cityslicka"
+    )
+    expect(login.status()).toBe(200)
+    const body = await login.json();
     expect(body.token).toBeTruthy()
 })
 
 test('post login - Missing Password', async ({request}) =>{
-    const response = await request.post(`login`,{
-        data:{
-            email:"eve.holt@reqres.in",
-        }
-    })
-    expect(response.status()).toBe(400)
-    const body = await response.json()
+    const authApi = new AuthApi(request)
+    const missing = await authApi.login(
+        "eve.holt@reqres.in",
+    )
+    expect(missing.status()).toBe(400)
+    const body = await missing.json()
     expect(body.error).toBeTruthy();
 })
 
 //CUSTOM COLLECTION
-async function getUser(request,id){
-    const res = await request.get(`collections/user/records/${id}`)
-    expect(res.status()).toBe(200)
-    return res.json();
-}
 
-async function postUser(request, age, job, email, last_name, first_name, project_id){
-    const res = await request.post(`collections/user/records?project_id=${project_id}`,{
-        data:{
-            data:{
-                age, 
-                job, 
-                email, 
-                last_name, 
-                first_name, 
-                project_id
-            }
-        }
-    })
-    expect(res.status()).toBe(201)
-    return res.json();
-}
-
-async function updateUser(request, id, data){
-    const res = await request.put(`collections/user/records/${id}`,
-        {data:
-            {data}
-        }
-    )
-    expect(res.status()).toBe(200);
-    return res.json();
-}
-
-async function deleteUser(request, id){
-    const res = await request.delete(`collections/user/records/${id}`);
-    expect(res.status()).toBe(204);
-}
-
-test('Get the one User use reusable helper', async ({request}) =>{
-    const getOneUser = await getUser(request, '2c43ea6c-c86c-44e7-a49f-63f84ef18348');
+test('Get the collection user ', async ({request}) =>{
+    const userapi = new UserApi(request);
+    const getUser = await userapi.getUser('2c43ea6c-c86c-44e7-a49f-63f84ef18348')
+    expect(getUser.status()).toBe(200)
+    const body = await getUser.json();
+    expect(body.data.data.email).toBeTruthy();
+    expect(body.data.data.first_name).toBeTruthy();
+    expect(body.data.data.age).toBeTruthy();
 })
+
 let idUser; 
 
-test('Post the New user', async ({request}) =>{
-    const postOneUser = await postUser(
-        request,
+test('Post / create a new user', async ({request}) =>{
+    const userapi = new UserApi(request);
+    const newUser = await userapi.postUser(
          30,
         'software Developer', 
         'iri@gmail.com', 
@@ -97,27 +70,31 @@ test('Post the New user', async ({request}) =>{
         'Iri', 
         35043
     )
-    console.log(`created todo ID: ${postOneUser.data.id}`);
-    idUser = postOneUser.data.id
-    expect(postOneUser.data.created_by).toBeTruthy();
-    expect(postOneUser.data.created_at).toBeTruthy();
-    expect(postOneUser.data.data.age).toBe(30);
-    expect(postOneUser.data.data.email).toBeTruthy();
-    expect(postOneUser.data.data.email).toBe('iri@gmail.com');
-    expect(postOneUser.data.data.first_name).toBeTruthy();
-    expect(postOneUser.data.data.first_name).toBe('Iri');
-    
+    expect(newUser.status()).toBe(201)
+    const body = await newUser.json();
+    idUser = body.data.id;
+    expect(body.data.created_at).toBeTruthy();
+    expect(body.data.created_by).toBeTruthy();
+    expect(body.data.data.age).toBe(30);
+    expect(body.data.data.email).toBeTruthy();
+    expect(body.data.data.email).toBe('iri@gmail.com');
+    expect(body.data.data.first_name).toBeTruthy();
+    expect(body.data.data.first_name).toBe('Iri');
 })
 
-test('edit the user after created', async ({request})=>{
-    const update = await updateUser(request, `${idUser}`,{
-         email: 'editIri@gmail.com'
-    })
-    console.log("update email---------:",update.data.data.email)
-    expect(update.data.data.email).toBe('editIri@gmail.com')
+test('Put / edit the user after created', async ({request})=>{
+    const userapi = new UserApi(request)
+    const updateUser = await userapi.updateUser(idUser,{
+        email: 'editIri@gmail.com'
+    }) 
+    expect(updateUser.status()).toBe(200);
+    const body = await updateUser.json();
+    console.log(body.data.data.email);
+    expect(body.data.data.email).toBe(`editIri@gmail.com`)
 })
 
 test('Delete the one user after created', async ({request}) =>{
-    console.log(`idUser at delete time`, idUser)
-    await deleteUser(request,`${idUser}`)
+    const userapi = new UserApi(request)
+    const deleteUser = await userapi.deleteUser(idUser)
+    expect(deleteUser.status()).toBe(204)
 })

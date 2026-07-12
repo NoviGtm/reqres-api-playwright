@@ -77,12 +77,12 @@ architecture. Each stage ends in a git commit.
   - [x] Add a `PUT` or `PATCH /users/:id` test: assert `200` and an
     `updatedAt` field in the response.
   - [x] Add a `DELETE /users/:id` test: assert `204` and an empty body.
-  - [ ] Add `POST /login` tests for both success (known valid credentials
+  - [x] Add `POST /login` tests for both success (known valid credentials
     from the ReqRes docs, assert a `token` comes back) and failure (missing
     password, assert `400` and an `error` message).
-  - [ ] Run `npx playwright test` and confirm every test in the file passes.
-  - [ ] Be able to explain out loud what each assertion checks and why.
-  - [ ] Commit: "Add more raw API tests + assertions."
+  - [x] Run `npx playwright test` and confirm every test in the file passes.
+  - [x] Be able to explain out loud what each assertion checks and why.
+  - [x] Commit: "Add more raw API tests + assertions."
 - **Stage 3 — Refactor to an API Client pattern**: Extract a small
   `UsersApi` / `AuthApi` class (or similar) wrapping the raw request calls —
   the API-testing analogue of the Page Object Model, sometimes called a
