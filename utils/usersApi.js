@@ -1,3 +1,5 @@
+const { AuthApi } = require("./authApi");
+
 class UserApi{
     constructor(request){
         this.request = request;

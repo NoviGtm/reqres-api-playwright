@@ -90,19 +90,19 @@ architecture. Each stage ends in a git commit.
   Commit: "Refactor to API client pattern."
 
   Steps to reach this stage's goal:
-  - [ ] Identify the repeated pieces across Stage 1–2 tests (base path,
+  - [x] Identify the repeated pieces across Stage 1–2 tests (base path,
     headers, response parsing) that motivate a client class.
-  - [ ] Create a `UsersApi` class (e.g. `utils/usersApi.js`) with methods
+  - [x] Create a `UsersApi` class (e.g. `utils/usersApi.js`) with methods
     like `getUser(id)`, `listUsers(page)`, `createUser(data)`,
     `updateUser(id, data)`, `deleteUser(id)`.
-  - [ ] Create an `AuthApi` class (or a `login` method) wrapping `POST /login`.
+  - [x] Create an `AuthApi` class (or a `login` method) wrapping `POST /login`.
   - [ ] Rewrite each Stage 1–2 test to call the client methods instead of
     `request.get/post/...` directly; assertions stay in the test.
-  - [ ] Run `npx playwright test` and confirm all tests still pass after the
+  - [x] Run `npx playwright test` and confirm all tests still pass after the
     rewrite.
-  - [ ] Be able to explain why this is the API-testing analogue of the Page
+  - [x] Be able to explain why this is the API-testing analogue of the Page
     Object Model.
-  - [ ] Commit: "Refactor to API client pattern."
+  - [x] Commit: "Refactor to API client pattern."
 - **Stage 4 — Fixtures + data-driven tests**: Add a custom Playwright fixture
   that hands tests a ready-to-use API client instance; parametrize tests over
   multiple payloads (valid/invalid registration data, several user IDs).
