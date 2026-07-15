@@ -109,15 +109,15 @@ architecture. Each stage ends in a git commit.
   Commit: "Add fixtures and data-driven tests."
 
   Steps to reach this stage's goal:
-  - [ ] Learn what a Playwright fixture is and how `test.extend` works.
-  - [ ] Create a custom fixture (e.g. in `fixtures.js`) that constructs and
+  - [x] Learn what a Playwright fixture is and how `test.extend` works.
+  - [x] Create a custom fixture (e.g. in `fixtures.js`) that constructs and
     hands tests a ready-to-use `UsersApi`/`AuthApi` instance.
-  - [ ] Update tests to import `test` from the fixtures file instead of
+  - [x] Update tests to import `test` from the fixtures file instead of
     `@playwright/test` directly, and use the injected client.
   - [ ] Add a data table of multiple payloads (e.g. valid/invalid
     registration data, several user IDs) and loop over it with
     `for (const case of cases) { test(...) }` or `test.describe.parallel`.
-  - [ ] Run `npx playwright test` and confirm all parametrized cases pass
+  - [x] Run `npx playwright test` and confirm all parametrized cases pass
     (or fail as expected for invalid-data cases).
   - [ ] Commit: "Add fixtures and data-driven tests."
 - **Stage 5 — CI**: Add a GitHub Actions workflow that runs the suite on
